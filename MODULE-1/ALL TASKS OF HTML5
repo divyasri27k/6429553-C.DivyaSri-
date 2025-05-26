@@ -1,1 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Local Community Event Portal</title>
+    <style>
+        /* Task 3 - Internal CSS */
+        #welcomeBanner {
+            background-color: blue;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
 
+        .highlight {
+            background-color: yellow;
+            font-weight: bold;
+        }
+
+        /* Task 4 - Image Styling */
+        .event-img {
+            border: 2px solid #444;
+            width: 100px;
+            height: 100px;
+        }
+
+        /* Task 5 - Form Styling */
+        form {
+            margin-top: 20px;
+        }
+
+        input, select, textarea {
+            display: block;
+            margin: 10px 0;
+            padding: 5px;
+        }
+
+        /* Task 6 - Feedback Styling */
+        #feedbackMessage {
+            color: green;
+        }
+    </style>
+    <script>
+        // Task 6 - JS Event Handlers
+        function validatePhone(e) {
+            let phone = e.value;
+            if (!/^\d{10}$/.test(phone)) alert("Invalid phone number!");
+        }
+
+        function showFee(sel) {
+            document.getElementById("feeDisplay").textContent = "Fee: $" + sel.value;
+        }
+  function confirmSubmission() {
+    document.getElementById("formOutput").value = "Form Submitted Successfully!";
+  }
+
+function enlargeImage(img) {
+    if (img.style.width === "200px") {
+        img.style.width = "100px";
+        img.style.height = "100px";
+    } else {
+        img.style.width = "200px";
+        img.style.height = "200px";
+    }
+}
+
+        function countCharacters(textarea) {
+            document.getElementById("charCount").textContent = "Characters: " + textarea.value.length;
+        }
+
+        // Task 7 - Video Events
+        function videoReady() {
+            document.getElementById("videoMsg").textContent = "Video ready to play";
+        }
+
+        window.onbeforeunload = function() {
+            return "Are you sure you want to leave this page?";
+        };
+
+        // Task 8 - Preferences
+        function savePreference() {
+            const selected = document.getElementById("eventTypePref").value;
+            localStorage.setItem("preferredEventType", selected);
+        }
+
+        function restorePreference() {
+            const saved = localStorage.getItem("preferredEventType");
+            if (saved) {
+                document.getElementById("eventTypePref").value = saved;
+                document.getElementById("savedPreferenceDisplay").textContent = "Restored preference: " + saved;
+            } else {
+                document.getElementById("savedPreferenceDisplay").textContent = "No saved preference.";
+            }
+        }
+
+        function clearPreferences() {
+            localStorage.clear();
+            sessionStorage.clear();
+        }
+
+        // Task 9 - Geolocation
+        function findNearbyEvents() {
+            navigator.geolocation.getCurrentPosition(
+                position => {
+                    document.getElementById("location").textContent =
+                        `Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`;
+                },
+                error => {
+                    document.getElementById("location").textContent = "Error: " + error.message;
+                },
+                { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+            );
+        }
+
+        // Task 10 - Debugging Example Logs and Errors
+        console.log("Portal loaded successfully.");
+        function debugTest() {
+    let sampleValue = document.getElementById("debugTestInput").value;
+    console.log("Debug Input:", sampleValue);
+    debugger; // pause here when DevTools is open
+    if (sampleValue === "error") {
+        console.error("Manual error triggered for debugging.");
+    } else if (sampleValue === "warn") {
+        console.warn("This is a warning message.");
+    }
+}
+
+    </script>
+</head>
+<body onload="restorePreference()">
+    <!-- Task 1: HTML5 Base Template -->
+
+    <!-- Task 2: Navigation and Linking -->
+    <nav>
+      <a href="#home">Home</a> |
+      <a href="#events">Events</a> |
+      <a href="#contact">Contact</a> |
+      <a href="help.html" target="_blank">Help</a>
+    </nav>
+
+    <!-- New: Home Section -->
+    <section id="home">
+        <h1>Welcome to the Local Community Event Portal</h1>
+        <p>This portal connects you to exciting events in your neighborhood!</p>
+    </section>
+
+
+    <!-- Task 3: Welcome Banner -->
+    <div id="welcomeBanner">
+        Welcome, User! <span style="color: red; font-weight: bold;">Special Offer!</span>
+    </div>
+
+    <!-- Task 4: Image Gallery -->
+    <section id="gallery">
+        <h2>Community Event Gallery</h2>
+        <table>
+  <caption>Photos from past events</caption>
+  <tr>
+    <td>
+      <figure>
+        <img src="event1.jpg" alt="Event 1" title="Music Night" class="event-img" ondblclick="enlargeImage(this)">
+        <figcaption>Music Night</figcaption>
+      </figure>
+    </td>
+    <td>
+      <figure>
+        <img src="event2.jpg" alt="Event 2" title="Food Fest" class="event-img" ondblclick="enlargeImage(this)">
+        <figcaption>Food Fest</figcaption>
+      </figure>
+    </td>
+    <td>
+      <figure>
+        <img src="event3.jpg" alt="Event 3" title="Charity Drive" class="event-img" ondblclick="enlargeImage(this)">
+        <figcaption>Charity Drive</figcaption>
+      </figure>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <figure>
+        <img src="event4.jpg" alt="Event 4" title="Dance Night" class="event-img" ondblclick="enlargeImage(this)">
+        <figcaption>Dance Night</figcaption>
+      </figure>
+    </td>
+    <td>
+      <figure>
+        <img src="event5.jpg" alt="Event 5" title="Marathon" class="event-img" ondblclick="enlargeImage(this)">
+        <figcaption>Marathon</figcaption>
+      </figure>
+    </td>
+    <td>
+      <figure>
+        <img src="event6.jpg" alt="Event 6" title="Craft Fair" class="event-img" ondblclick="enlargeImage(this)">
+        <figcaption>Craft Fair</figcaption>
+      </figure>
+    </td>
+  </tr>
+</table>
+
+    </section>
+
+    <!-- Task 5: Event Registration Form -->
+    <section id="events">
+        <h2>Register for Events</h2>
+        <form onsubmit="return confirmSubmission();">
+            <input type="text" name="name" placeholder="Enter Name" required autofocus>
+            <input type="email" name="email" placeholder="Enter Email" required>
+            <input type="date" name="date" required>
+            <select onchange="showFee(this); savePreference();">
+    <option value="10">Music Night</option>
+    <option value="20">Food Fest</option>
+    <option value="15">Charity Drive</option>
+    <option value="12">Dance Night</option>
+    <option value="25">Marathon</option>
+    <option value="18">Craft Fair</option>
+</select>
+
+            <textarea name="message" placeholder="Enter Message"></textarea>
+            <input type="tel" name="phone" placeholder="Phone Number" onblur="validatePhone(this)">
+            <output id="formOutput"></output>
+            <button type="submit" onclick="confirmSubmission()">Submit</button>
+        </form>
+        <div id="feeDisplay"></div>
+    </section>
+
+    <!-- Task 6: Event Feedback -->
+    <section id="contact">
+        <h2>Event Feedback</h2>
+        <textarea onkeyup="countCharacters(this)"></textarea>
+        <div id="charCount"></div>
+    </section>
+
+    <!-- Task 7: Video Invite -->
+    <section>
+        <h2>Event Promo Video</h2>
+        <video width="320" height="240" controls oncanplay="videoReady()">
+            <source src="promo.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div id="videoMsg"></div>
+    </section>
+
+    <!-- Task 8: Saving User Preferences -->
+    <section id="preferences">
+        <h2>Event Type Preferences</h2>
+        <label for="eventTypePref">Select your preferred event type:</label>
+        <select id="eventTypePref" onchange="savePreference()">
+            <option value="Music Night">Music Night</option>
+            <option value="Food Fest">Food Fest</option>
+            <option value="Charity Drive">Charity Drive</option>
+            <option value="Dance Night">Dance Night</option>
+            <option value="Marathon">Marathon</option>
+            <option value="Craft Fair">Craft Fair</option>
+        </select>
+        <button onclick="restorePreference()">Load Preference</button>
+        <button onclick="clearPreferences()">Clear Preferences</button>
+        <p id="savedPreferenceDisplay" class="highlight"></p>
+    </section>
+
+    <!-- Task 9: Geolocation -->
+    <section>
+        <h2>Find Nearby Events</h2>
+        <button onclick="findNearbyEvents()">Find Nearby Events</button>
+        <div id="location"></div>
+    </section>
+
+    <!-- Task 10: Debugging Test Field -->
+    <section id="debug">
+        <h2>Developer Debugging Console</h2>
+        <input type="text" id="debugTestInput" placeholder="Type 'error' to trigger an error">
+        <button onclick="debugTest()">Run Debug Test</button>
+    </section>
+
+    <!-- Task 1: Footer Section -->
+    <footer>
+        <p class="highlight">&copy; 2025 Local Community Events. All rights reserved.</p>
+    </footer>
+</body>
+</html>
