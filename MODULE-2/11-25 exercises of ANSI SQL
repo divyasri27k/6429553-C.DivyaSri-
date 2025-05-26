@@ -1,1 +1,99 @@
+11. Daily New User Count:
+SELECT registration_date, COUNT(*) AS new_users
+FROM Users
+WHERE registration_date >= CURDATE() - INTERVAL 7 DAY
+GROUP BY registration_date;
 
+12. Event with Maximum Sessions:
+SELECT event_id, COUNT(*) AS session_count
+FROM Sessions
+GROUP BY event_id
+ORDER BY session_count DESC
+LIMIT 1;
+
+13. Average Rating per City:
+SELECT E.city, AVG(F.rating) AS avg_rating
+FROM Feedback F
+JOIN Events E ON F.event_id = E.event_id
+GROUP BY E.city;
+
+14. Most Registered Events:
+SELECT event_id, COUNT(*) AS registrations
+FROM Registrations
+GROUP BY event_id
+ORDER BY registrations DESC
+LIMIT 3;
+
+15. Event Session Time Conflict:
+SELECT A.event_id, A.session_id AS session1, B.session_id AS session2
+FROM Sessions A
+JOIN Sessions B ON A.event_id = B.event_id AND A.session_id < B.session_id
+WHERE A.start_time < B.end_time AND B.start_time < A.end_time;
+
+16. Unregistered Active Users:
+SELECT *
+FROM Users
+WHERE registration_date >= CURDATE() - INTERVAL 30 DAY
+AND user_id NOT IN (
+    SELECT DISTINCT user_id FROM Registrations
+);
+
+17. Multi-Session Speakers:
+SELECT speaker_name, COUNT(*) AS session_count
+FROM Sessions
+GROUP BY speaker_name
+HAVING COUNT(*) > 1;
+
+18. Resource Availability Check:
+SELECT E.event_id, E.title
+FROM Events E
+LEFT JOIN Resources R ON E.event_id = R.event_id
+WHERE R.resource_id IS NULL;
+
+19. Completed Events with Feedback Summary:
+SELECT E.event_id, COUNT(DISTINCT R.user_id) AS total_registrations, AVG(F.rating) AS avg_rating
+FROM Events E
+LEFT JOIN Registrations R ON E.event_id = R.event_id
+LEFT JOIN Feedback F ON E.event_id = F.event_id
+WHERE E.status = 'completed'
+GROUP BY E.event_id;
+
+20. User Engagement Index:
+SELECT U.user_id, 
+       COUNT(DISTINCT R.event_id) AS events_attended,
+       COUNT(DISTINCT F.feedback_id) AS feedbacks_given
+FROM Users U
+LEFT JOIN Registrations R ON U.user_id = R.user_id
+LEFT JOIN Feedback F ON U.user_id = F.user_id
+GROUP BY U.user_id;
+
+21. Top Feedback Providers:
+SELECT user_id, COUNT(*) AS feedback_count
+FROM Feedback
+GROUP BY user_id
+ORDER BY feedback_count DESC
+LIMIT 5;
+
+22. Duplicate Registrations Check:
+SELECT user_id, event_id, COUNT(*) AS times_registered
+FROM Registrations
+GROUP BY user_id, event_id
+HAVING COUNT(*) > 1;
+
+23. Registration Trends:
+SELECT DATE_FORMAT(registration_date, '%Y-%m') AS month, COUNT(*) AS registration_count
+FROM Users
+GROUP BY month
+ORDER BY month;
+
+24. Average Session Duration per Event:
+SELECT event_id, 
+       AVG(TIMESTAMPDIFF(MINUTE, start_time, end_time)) AS avg_duration_minutes
+FROM Sessions
+GROUP BY event_id;
+
+25. Events Without Sessions:
+SELECT E.event_id, E.title
+FROM Events E
+LEFT JOIN Sessions S ON E.event_id = S.event_id
+WHERE S.session_id IS NULL;
