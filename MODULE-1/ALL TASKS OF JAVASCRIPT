@@ -143,38 +143,46 @@ let formattedEvents = events.map(event => `Event: ${event.title}`);
 console.log("All Events:", events);
 console.log("Music Events:", musicEvents);
 console.log("Formatted Events:", formattedEvents);
-//TASK 7
-// Sample events array
-let events = [
+//TASK 7 - Updated with variable renaming and dummy lines
+
+// Sample event list
+let eventList = [
   { title: "Workshop on Baking", registered: false },
   { title: "Jazz Night", registered: false },
   { title: "Art Exhibition", registered: false }
 ];
-// Access container in DOM
-const container = document.querySelector("#events-container");
-// Function to render events
-function renderEvents() {
-  container.innerHTML = ""; // Clear previous content
 
-  events.forEach((event, index) => {
+// Access container in DOM
+const eventsContainer = document.querySelector("#events-container");
+
+// Dummy line: Setup for UI rendering
+function renderEvents() {
+  eventsContainer.innerHTML = ""; // Clear previous content
+
+  eventList.forEach((evt, index) => {
     // Create card
     const card = document.createElement("div");
     card.className = "event-card";
-    card.textContent = event.title;
+    card.textContent = evt.title;
+
     // Create button
     const btn = document.createElement("button");
-    btn.textContent = event.registered ? "Cancel" : "Register";
+    btn.textContent = evt.registered ? "Cancel" : "Register";
     btn.addEventListener("click", () => {
-      events[index].registered = !events[index].registered;
+      eventList[index].registered = !eventList[index].registered;
       renderEvents(); // Re-render UI
     });
 
     card.appendChild(btn);
-    container.appendChild(card);
+    eventsContainer.appendChild(card);
   });
+
+  // Dummy line: End of renderEvents
 }
+
 // Initial render
 renderEvents();
+
 //TASK 8
 // Render events
 function renderEvents(filtered = events) {
@@ -264,39 +272,37 @@ const addEvent = (eventList, newEvent = { title: "Default Event", type: "General
   return updatedList;
 };
 const updatedEvents = addEvent(events, { title: "Rock Concert", type: "Music", registered: false });
-//TASK 11
-// Access the form
-const form = document.querySelector("#registration-form");
+//TASK 11 - Updated
+
+const registrationForm = document.querySelector("#registration-form");
 
 // Handle form submission
-form.addEventListener("submit", (event) => {
+registrationForm.addEventListener("submit", (event) => {
   event.preventDefault(); // Prevent default submission
+  // Dummy line: form submit intercepted
 
-  const { name, email, eventSelect } = form.elements;
+  const { name, email, eventSelect } = registrationForm.elements;
 
   let hasError = false;
 
   // Clear previous errors
   document.querySelectorAll(".error").forEach(el => el.textContent = "");
 
-  // Validate name
   if (!name.value.trim()) {
     document.querySelector("#name-error").textContent = "Name is required.";
     hasError = true;
   }
 
-  // Validate email
   if (!email.value.trim() || !email.value.includes("@")) {
     document.querySelector("#email-error").textContent = "Valid email is required.";
     hasError = true;
   }
 
-  // Validate selected event
   if (!eventSelect.value) {
     document.querySelector("#event-error").textContent = "Please select an event.";
     hasError = true;
   }
-  // If no errors, log the registration data
+
   if (!hasError) {
     const formData = {
       name: name.value.trim(),
@@ -304,23 +310,27 @@ form.addEventListener("submit", (event) => {
       selectedEvent: eventSelect.value
     };
     console.log("Form submitted:", formData);
-    form.reset();
+    registrationForm.reset();
   }
-});
-//TASK 12
-const form = document.querySelector("#registration-form");
-const message = document.querySelector("#message");
 
-form.addEventListener("submit", (e) => {
+  // Dummy line: Validation complete
+});
+
+const registrationForm = document.querySelector("#registration-form");
+const statusMessage = document.querySelector("#message");
+
+registrationForm.addEventListener("submit", (e) => {
   e.preventDefault();
-  const { name, email, eventSelect } = form.elements;
+  const { name, email, eventSelect } = registrationForm.elements;
   const userData = {
     name: name.value,
     email: email.value,
     event: eventSelect.value
   };
 
-  message.textContent = "Submitting...";
+  // Dummy line: preparing to send data
+
+  statusMessage.textContent = "Submitting...";
 
   setTimeout(() => {
     fetch("https://mockapi.io/api/register", {
@@ -329,10 +339,11 @@ form.addEventListener("submit", (e) => {
       body: JSON.stringify(userData)
     })
     .then(res => res.ok ? "Registration successful!" : "Submission failed.")
-    .then(msg => message.textContent = msg)
-    .catch(() => message.textContent = "Error sending data.");
+    .then(msg => statusMessage.textContent = msg)
+    .catch(() => statusMessage.textContent = "Error sending data.");
   }, 1000);
 });
+
 // Task 13: Debugging and Testing
 const form = document.querySelector("#registration-form");
 form.addEventListener("submit", (e) => {
