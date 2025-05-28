@@ -1,119 +1,125 @@
 // 31. Basic JDBC Connection
-// Connect to a local SQLite database and retrieve data from "students" table
-
 import java.sql.*;
 
 public class BasicJDBCConnection {
     public static void main(String[] args) {
-        String url = "jdbc:sqlite:students.db"; // SQLite file database
+        String databaseUrl = "jdbc:sqlite:students.db"; // SQLite file database
+        String logMsg = "Attempting database connection...";
 
-        try (Connection conn = DriverManager.getConnection(url)) {
+        try (Connection connection = DriverManager.getConnection(databaseUrl)) {
             System.out.println("Connection to SQLite established.");
 
-            String query = "SELECT id, name, age FROM students";
-            try (Statement stmt = conn.createStatement();
-                 ResultSet rs = stmt.executeQuery(query)) {
+            String sqlQuery = "SELECT id, name, age FROM students";
+            try (Statement statement = connection.createStatement();
+                 ResultSet resultSet = statement.executeQuery(sqlQuery)) {
 
-                while (rs.next()) {
-                    System.out.println("ID: " + rs.getInt("id") +
-                                       ", Name: " + rs.getString("name") +
-                                       ", Age: " + rs.getInt("age"));
+                while (resultSet.next()) {
+                    int studentId = resultSet.getInt("id");
+                    String studentName = resultSet.getString("name");
+                    int studentAge = resultSet.getInt("age");
+                    System.out.println("ID: " + studentId +
+                                       ", Name: " + studentName +
+                                       ", Age: " + studentAge);
                 }
             }
-        } catch (SQLException e) {
-            System.out.println("Error: " + e.getMessage());
+        } catch (SQLException ex) {
+            System.out.println("Error: " + ex.getMessage());
         }
     }
 }
 // 32. Insert and Update Operations in JDBC
-// StudentDAO with insert and update methods using PreparedStatement
-
 import java.sql.*;
 
 public class StudentDAO {
-    private final Connection conn;
+    private final Connection connectionRef;
 
     public StudentDAO(Connection conn) {
-        this.conn = conn;
+        this.connectionRef = conn;
     }
 
-    public void insertStudent(int id, String name, int age) throws SQLException {
-        String sql = "INSERT INTO students (id, name, age) VALUES (?, ?, ?)";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, id);
-            pstmt.setString(2, name);
-            pstmt.setInt(3, age);
-            pstmt.executeUpdate();
+    public void insertStudent(int studentId, String studentName, int studentAge) throws SQLException {
+        String insertSQL = "INSERT INTO students (id, name, age) VALUES (?, ?, ?)";
+        String dummyLog = "Preparing to insert student data";
+
+        try (PreparedStatement preparedStatement = connectionRef.prepareStatement(insertSQL)) {
+            preparedStatement.setInt(1, studentId);
+            preparedStatement.setString(2, studentName);
+            preparedStatement.setInt(3, studentAge);
+            preparedStatement.executeUpdate();
             System.out.println("Student inserted.");
         }
     }
 
-    public void updateStudentAge(int id, int newAge) throws SQLException {
-        String sql = "UPDATE students SET age = ? WHERE id = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, newAge);
-            pstmt.setInt(2, id);
-            int rows = pstmt.executeUpdate();
-            if (rows > 0) {
-                System.out.println("Student age updated.");
-            } else {
-                System.out.println("Student not found.");
+    public void updateStudentAge(int studentId, int updatedAge) throws SQLException {
+        String updateSQL = "UPDATE students SET age = ? WHERE id = ?";
+        boolean isUpdated = false;
+
+        try (PreparedStatement preparedStatement = connectionRef.prepareStatement(updateSQL)) {
+            preparedStatement.setInt(1, updatedAge);
+            preparedStatement.setInt(2, studentId);
+            int affectedRows = preparedStatement.executeUpdate();
+            if (affectedRows > 0) {
+                isUpdated = true;
             }
+        }
+        if (isUpdated) {
+            System.out.println("Student age updated.");
+        } else {
+            System.out.println("Student not found.");
         }
     }
 
     // Main for testing
     public static void main(String[] args) {
-        String url = "jdbc:sqlite:students.db";
-        try (Connection conn = DriverManager.getConnection(url)) {
-            StudentDAO dao = new StudentDAO(conn);
-            dao.insertStudent(3, "John Doe", 22);
-            dao.updateStudentAge(3, 23);
-        } catch (SQLException e) {
-            e.printStackTrace();
+        String dbUrl = "jdbc:sqlite:students.db";
+        try (Connection connInstance = DriverManager.getConnection(dbUrl)) {
+            StudentDAO daoInstance = new StudentDAO(connInstance);
+            daoInstance.insertStudent(3, "John Doe", 22);
+            daoInstance.updateStudentAge(3, 23);
+        } catch (SQLException exc) {
+            exc.printStackTrace();
         }
     }
 }
 // 33. Transaction Handling in JDBC
-// Simulate money transfer between two accounts
-
 import java.sql.*;
 
 public class TransactionDemo {
-    public static void transfer(Connection conn, int fromAcc, int toAcc, double amount) throws SQLException {
+    public static void transferFunds(Connection dbConnection, int sourceAcc, int destinationAcc, double transferAmount) throws SQLException {
+        String transactionLog = "Starting transfer transaction...";
         try {
-            conn.setAutoCommit(false);
+            dbConnection.setAutoCommit(false);
 
-            String debitSql = "UPDATE accounts SET balance = balance - ? WHERE id = ?";
-            String creditSql = "UPDATE accounts SET balance = balance + ? WHERE id = ?";
+            String debitSQL = "UPDATE accounts SET balance = balance - ? WHERE id = ?";
+            String creditSQL = "UPDATE accounts SET balance = balance + ? WHERE id = ?";
 
-            try (PreparedStatement debitStmt = conn.prepareStatement(debitSql);
-                 PreparedStatement creditStmt = conn.prepareStatement(creditSql)) {
+            try (PreparedStatement debitStmt = dbConnection.prepareStatement(debitSQL);
+                 PreparedStatement creditStmt = dbConnection.prepareStatement(creditSQL)) {
 
-                debitStmt.setDouble(1, amount);
-                debitStmt.setInt(2, fromAcc);
+                debitStmt.setDouble(1, transferAmount);
+                debitStmt.setInt(2, sourceAcc);
                 debitStmt.executeUpdate();
 
-                creditStmt.setDouble(1, amount);
-                creditStmt.setInt(2, toAcc);
+                creditStmt.setDouble(1, transferAmount);
+                creditStmt.setInt(2, destinationAcc);
                 creditStmt.executeUpdate();
 
-                conn.commit();
+                dbConnection.commit();
                 System.out.println("Transfer successful.");
             }
         } catch (SQLException e) {
-            conn.rollback();
+            dbConnection.rollback();
             System.out.println("Transfer failed, transaction rolled back.");
             throw e;
         } finally {
-            conn.setAutoCommit(true);
+            dbConnection.setAutoCommit(true);
         }
     }
 
     public static void main(String[] args) {
-        String url = "jdbc:sqlite:bank.db"; // Your database file
-        try (Connection conn = DriverManager.getConnection(url)) {
-            transfer(conn, 1, 2, 100.0);
+        String databaseURL = "jdbc:sqlite:bank.db"; // Your database file
+        try (Connection connectionObj = DriverManager.getConnection(databaseURL)) {
+            transferFunds(connectionObj, 1, 2, 100.0);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -155,80 +161,77 @@ public class Greeting {
         System.out.println(Utils.getGreeting());
     }
 }
-// 35. TCP Client-Server Chat
-// Server.java
-
+// 35. TCP Client-Server Chat (Server.java)
 import java.io.*;
 import java.net.*;
 
 public class Server {
     public static void main(String[] args) throws IOException {
-        ServerSocket serverSocket = new ServerSocket(5000);
+        ServerSocket serverSock = new ServerSocket(5000);
         System.out.println("Server started, waiting for client...");
-        Socket clientSocket = serverSocket.accept();
+        Socket clientSock = serverSock.accept();
         System.out.println("Client connected.");
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-        BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader inputFromClient = new BufferedReader(new InputStreamReader(clientSock.getInputStream()));
+        PrintWriter outputToClient = new PrintWriter(clientSock.getOutputStream(), true);
+        BufferedReader inputFromServerUser = new BufferedReader(new InputStreamReader(System.in));
 
-        String clientMsg, serverMsg;
-        while ((clientMsg = in.readLine()) != null) {
-            System.out.println("Client: " + clientMsg);
+        String receivedMsg, sendMsg;
+        while ((receivedMsg = inputFromClient.readLine()) != null) {
+            System.out.println("Client: " + receivedMsg);
             System.out.print("Server: ");
-            serverMsg = userInput.readLine();
-            out.println(serverMsg);
-            if ("bye".equalsIgnoreCase(serverMsg)) break;
+            sendMsg = inputFromServerUser.readLine();
+            outputToClient.println(sendMsg);
+            if ("bye".equalsIgnoreCase(sendMsg)) break;
         }
 
-        clientSocket.close();
-        serverSocket.close();
+        clientSock.close();
+        serverSock.close();
     }
 }
-// Client.java
 
+// 35. TCP Client-Server Chat (Client.java)
 import java.io.*;
 import java.net.*;
 
 public class Client {
     public static void main(String[] args) throws IOException {
-        Socket socket = new Socket("localhost", 5000);
-        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-        BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in));
+        Socket socketObj = new Socket("localhost", 5000);
+        BufferedReader serverInput = new BufferedReader(new InputStreamReader(socketObj.getInputStream()));
+        PrintWriter clientOutput = new PrintWriter(socketObj.getOutputStream(), true);
+        BufferedReader clientUserInput = new BufferedReader(new InputStreamReader(System.in));
 
-        String serverMsg, clientMsg;
+        String serverResponse, clientMessage;
         while (true) {
             System.out.print("Client: ");
-            clientMsg = userInput.readLine();
-            out.println(clientMsg);
-            if ("bye".equalsIgnoreCase(clientMsg)) break;
-            serverMsg = in.readLine();
-            System.out.println("Server: " + serverMsg);
+            clientMessage = clientUserInput.readLine();
+            clientOutput.println(clientMessage);
+            if ("bye".equalsIgnoreCase(clientMessage)) break;
+            serverResponse = serverInput.readLine();
+            System.out.println("Server: " + serverResponse);
         }
 
-        socket.close();
+        socketObj.close();
     }
 }
 // 36. HTTP Client API (Java 11+)
-// Fetch data from GitHub API
-
 import java.net.URI;
 import java.net.http.*;
 
 public class HttpClientDemo {
     public static void main(String[] args) throws Exception {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpClient httpClient = HttpClient.newHttpClient();
+        HttpRequest httpRequest = HttpRequest.newBuilder()
                 .uri(new URI("https://api.github.com/"))
                 .GET()
                 .build();
 
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
 
-        System.out.println("Status: " + response.statusCode());
+        String statusLog = "Received status code: " + httpResponse.statusCode();
+        System.out.println("Status: " + httpResponse.statusCode());
         System.out.println("Body:");
-        System.out.println(response.body());
+        System.out.println(httpResponse.body());
     }
 }
 // 37. Using javap to Inspect Bytecode
@@ -288,44 +291,38 @@ public class VirtualThreadsDemo {
 }
 import java.util.concurrent.*;
 import java.util.*;
-//41 Executor Service and Callable
+// 41 Executor Service and Callable
+import java.util.concurrent.*;
+import java.util.*;
+
 public class ExecutorServiceCallableDemo {
     public static void main(String[] args) {
-        // Create a fixed thread pool with 3 threads
-        ExecutorService executor = Executors.newFixedThreadPool(3);
+        ExecutorService executorService = Executors.newFixedThreadPool(3);
+        List<Callable<String>> callableTasks = new ArrayList<>();
 
-        // Create a list of Callable tasks
-        List<Callable<String>> tasks = new ArrayList<>();
-
-        // Add some tasks (each returns a String result)
-        tasks.add(() -> {
+        callableTasks.add(() -> {
             Thread.sleep(1000); // simulate work
             return "Task 1 completed";
         });
-        tasks.add(() -> {
+        callableTasks.add(() -> {
             Thread.sleep(500);
             return "Task 2 completed";
         });
-        tasks.add(() -> {
+        callableTasks.add(() -> {
             Thread.sleep(2000);
             return "Task 3 completed";
         });
 
         try {
-            // Submit all tasks and get a list of Futures
-            List<Future<String>> futures = executor.invokeAll(tasks);
-
-            // Loop through futures to get results
-            for (Future<String> future : futures) {
-                // get() will block until the result is available
-                String result = future.get();
-                System.out.println(result);
+            List<Future<String>> futureResults = executorService.invokeAll(callableTasks);
+            for (Future<String> future : futureResults) {
+                String taskResult = future.get();
+                System.out.println(taskResult);
             }
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         } finally {
-            // Shutdown the executor service
-            executor.shutdown();
+            executorService.shutdown();
         }
     }
 }
