@@ -356,11 +356,23 @@
     <!-- Exercise 15.1: Borders and rounded circle on image -->
     <h3>Exercise 15.1: Rounded Image</h3>
     <img src="https://via.placeholder.com/100" class="border border-primary border-3 rounded-circle" alt="Rounded Image" />
-
+   <h3>Exercise 15.1: Borders</h3>
+    <div class="container mt-3">
+      <div class="border p-3 mb-3">Default border</div>
+      <div class="border border-primary p-3 mb-3">Primary colored border</div>
+      <div class="border border-danger border-3 p-3 mb-3">Thick red border</div>
+    </div>
     <!-- Exercise 15.2: Shadow and rounded pill on card -->
     <h3>Exercise 15.2: Shadow and Rounded Pill Card</h3>
     <div class="card shadow-lg rounded-pill p-3 mt-3" style="max-width: 300px;">
       <div class="card-body">Card with shadow and rounded-pill</div>
+    </div>
+  </section>
+<h3>Exercise 15.2: Shadows and Rounded Corners</h3>
+    <div class="container mt-3">
+      <div class="p-3 shadow-sm mb-3 rounded">Small shadow and rounded</div>
+      <div class="p-3 shadow mb-3 rounded-3">Regular shadow and rounded-3</div>
+      <div class="p-3 shadow-lg mb-3 rounded-pill bg-light">Large shadow and pill shape</div>
     </div>
   </section>
 
