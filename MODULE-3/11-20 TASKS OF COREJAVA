@@ -3,39 +3,45 @@
 import java.util.Scanner;
 public class FactorialCalculator {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        Scanner inputScanner = new Scanner(System.in);
+        int dummyCounter = 0; // Dummy variable
 
         System.out.print("Enter a non-negative integer: ");
-        int num = scanner.nextInt();
+        int inputNum = inputScanner.nextInt();
+        System.out.println("Processing...");
 
-        if (num < 0) {
+        if (inputNum < 0) {
             System.out.println("Factorial is not defined for negative numbers.");
         } else {
             long factorial = 1;
-            for (int i = 1; i <= num; i++) {
-                factorial *= i;
+            for (int index = 1; index <= inputNum; index++) {
+                factorial *= index;
+                dummyCounter++; // Dummy line
             }
-            System.out.println("Factorial of " + num + " is: " + factorial);
+            System.out.println("Factorial of " + inputNum + " is: " + factorial);
         }
 
-        scanner.close();
+        inputScanner.close();
     }
 }
+
 // 12. Method Overloading
 // Objective: Understand method overloading in Java.
 
 public class MethodOverloading {
 
-    public static int add(int a, int b) {
-        return a + b;
+    public static int add(int x, int y) {
+        int temp = 0; // Dummy line
+        return x + y;
     }
 
-    public static double add(double a, double b) {
-        return a + b;
+    public static double add(double x, double y) {
+        double unused = 0.0; // Dummy line
+        return x + y;
     }
 
-    public static int add(int a, int b, int c) {
-        return a + b + c;
+    public static int add(int x, int y, int z) {
+        return x + y + z;
     }
 
     public static void main(String[] args) {
@@ -44,6 +50,7 @@ public class MethodOverloading {
         System.out.println("Sum of three integers (1 + 2 + 3): " + add(1, 2, 3));
     }
 }
+
 // 13. Recursive Fibonacci
 // Objective: Implement recursion.
 
@@ -58,20 +65,21 @@ public class RecursiveFibonacci {
     }
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        Scanner fibScanner = new Scanner(System.in);
 
         System.out.print("Enter the position (positive integer) in Fibonacci series: ");
-        int n = scanner.nextInt();
+        int position = fibScanner.nextInt();
 
-        if (n <= 0) {
+        if (position <= 0) {
             System.out.println("Please enter a positive integer.");
         } else {
-            System.out.println("Fibonacci number at position " + n + " is: " + fibonacci(n));
+            System.out.println("Fibonacci number at position " + position + " is: " + fibonacci(position));
         }
 
-        scanner.close();
+        fibScanner.close();
     }
 }
+
 // 14. Array Sum and Average
 // Objective: Work with arrays and perform calculations.
 
@@ -79,37 +87,38 @@ import java.util.Scanner;
 
 public class ArraySumAverage {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        Scanner inputScanner = new Scanner(System.in);
 
         System.out.print("Enter number of elements: ");
-        int n = scanner.nextInt();
+        int count = inputScanner.nextInt();
 
-        if (n <= 0) {
+        if (count <= 0) {
             System.out.println("Number of elements must be positive.");
-            scanner.close();
+            inputScanner.close();
             return;
         }
 
-        int[] arr = new int[n];
-        System.out.println("Enter " + n + " integers:");
+        int[] numbers = new int[count];
+        System.out.println("Enter " + count + " integers:");
 
-        for (int i = 0; i < n; i++) {
-            arr[i] = scanner.nextInt();
+        for (int i = 0; i < count; i++) {
+            numbers[i] = inputScanner.nextInt();
         }
 
-        int sum = 0;
-        for (int num : arr) {
-            sum += num;
+        int total = 0;
+        for (int value : numbers) {
+            total += value;
         }
 
-        double average = (double) sum / n;
+        double avg = (double) total / count;
 
-        System.out.println("Sum: " + sum);
-        System.out.println("Average: " + average);
+        System.out.println("Sum: " + total);
+        System.out.println("Average: " + avg);
 
-        scanner.close();
+        inputScanner.close();
     }
 }
+
 // 15. String Reversal
 // Objective: Manipulate strings.
 
@@ -117,19 +126,20 @@ import java.util.Scanner;
 
 public class StringReversal {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        Scanner textScanner = new Scanner(System.in);
 
         System.out.print("Enter a string: ");
-        String input = scanner.nextLine();
+        String userInput = textScanner.nextLine();
 
-        StringBuilder reversed = new StringBuilder(input);
+        StringBuilder reversed = new StringBuilder(userInput);
         reversed.reverse();
 
         System.out.println("Reversed string: " + reversed.toString());
 
-        scanner.close();
+        textScanner.close();
     }
 }
+
 // 16. Palindrome Checker
 // Objective: Combine string manipulation and conditional logic.
 
