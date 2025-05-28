@@ -43,89 +43,104 @@
         }
     </style>
     <script>
-        // Task 6 - JS Event Handlers
-        function validatePhone(e) {
-            let phone = e.value;
-            if (!/^\d{10}$/.test(phone)) alert("Invalid phone number!");
-        }
-
-        function showFee(sel) {
-            document.getElementById("feeDisplay").textContent = "Fee: $" + sel.value;
-        }
-  function confirmSubmission() {
-    document.getElementById("formOutput").value = "Form Submitted Successfully!";
-  }
-
-function enlargeImage(img) {
-    if (img.style.width === "200px") {
-        img.style.width = "100px";
-        img.style.height = "100px";
-    } else {
-        img.style.width = "200px";
-        img.style.height = "200px";
+        <script>
+    // Task 6 - JS Event Handlers
+    function validatePhone(e) {
+        let phoneInput = e.value; // renamed from 'phone'
+        if (!/^\d{10}$/.test(phoneInput)) alert("Invalid phone number!");
     }
-}
 
-        function countCharacters(textarea) {
-            document.getElementById("charCount").textContent = "Characters: " + textarea.value.length;
+    function showFee(feeSelector) { // renamed from 'sel'
+        document.getElementById("feeDisplay").textContent = "Fee: $" + feeSelector.value;
+    }
+
+    function confirmSubmission() {
+        // Dummy line: Confirming form submission
+        document.getElementById("formOutput").value = "Form Submitted Successfully!";
+    }
+
+    function enlargeImage(img) {
+        // Dummy line: Toggling image size
+        if (img.style.width === "200px") {
+            img.style.width = "100px";
+            img.style.height = "100px";
+        } else {
+            img.style.width = "200px";
+            img.style.height = "200px";
         }
+    }
 
-        // Task 7 - Video Events
-        function videoReady() {
-            document.getElementById("videoMsg").textContent = "Video ready to play";
-        }
+    function countCharacters(txtArea) { // renamed from 'textarea'
+        document.getElementById("charCount").textContent = "Characters: " + txtArea.value.length;
+    }
 
-        window.onbeforeunload = function() {
-            return "Are you sure you want to leave this page?";
-        };
+     // Task 7 - Video Events
+    function videoReady() {
+        document.getElementById("videoMsg").textContent = "Video ready to play";
+    }
+
+    // Dummy log to test window unload
+    window.onbeforeunload = function () {
+        return "Are you sure you want to leave this page?";
+    };
 
         // Task 8 - Preferences
-        function savePreference() {
-            const selected = document.getElementById("eventTypePref").value;
-            localStorage.setItem("preferredEventType", selected);
-        }
+    function savePreference() {
+        const selectedType = document.getElementById("eventTypePref").value; // renamed
+        localStorage.setItem("preferredEventType", selectedType);
+    }
 
-        function restorePreference() {
-            const saved = localStorage.getItem("preferredEventType");
-            if (saved) {
-                document.getElementById("eventTypePref").value = saved;
-                document.getElementById("savedPreferenceDisplay").textContent = "Restored preference: " + saved;
-            } else {
-                document.getElementById("savedPreferenceDisplay").textContent = "No saved preference.";
-            }
+    function restorePreference() {
+        const savedType = localStorage.getItem("preferredEventType");
+        if (savedType) {
+            document.getElementById("eventTypePref").value = savedType;
+            document.getElementById("savedPreferenceDisplay").textContent = "Restored preference: " + savedType;
+        } else {
+            document.getElementById("savedPreferenceDisplay").textContent = "No saved preference.";
         }
+    }
 
-        function clearPreferences() {
-            localStorage.clear();
-            sessionStorage.clear();
-        }
+    function clearPreferences() {
+        localStorage.clear();
+        sessionStorage.clear();
+        // Dummy line: Preferences cleared
+    }
 
         // Task 9 - Geolocation
-        function findNearbyEvents() {
-            navigator.geolocation.getCurrentPosition(
-                position => {
-                    document.getElementById("location").textContent =
-                        `Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`;
-                },
-                error => {
-                    document.getElementById("location").textContent = "Error: " + error.message;
-                },
-                { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
-            );
-        }
-
-        // Task 10 - Debugging Example Logs and Errors
-        console.log("Portal loaded successfully.");
-        function debugTest() {
-    let sampleValue = document.getElementById("debugTestInput").value;
-    console.log("Debug Input:", sampleValue);
-    debugger; // pause here when DevTools is open
-    if (sampleValue === "error") {
-        console.error("Manual error triggered for debugging.");
-    } else if (sampleValue === "warn") {
-        console.warn("This is a warning message.");
+    function findNearbyEvents() {
+        // Dummy line: Getting user location
+        navigator.geolocation.getCurrentPosition(
+            pos => {
+                document.getElementById("location").textContent =
+                    `Latitude: ${pos.coords.latitude}, Longitude: ${pos.coords.longitude}`; // renamed from 'position'
+            },
+            err => {
+                document.getElementById("location").textContent = "Error: " + err.message;
+            },
+            { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+        );
     }
-}
+
+
+    // Task 10 - Debugging Example Logs and Errors
+    console.log("Portal loaded successfully.");
+    function debugTest() {
+        let inputVal = document.getElementById("debugTestInput").value; // renamed
+        console.log("Debug Input:", inputVal);
+        debugger; // pause here when DevTools is open
+        if (inputVal === "error") {
+            console.error("Manual error triggered for debugging.");
+        } else if (inputVal === "warn") {
+            console.warn("This is a warning message.");
+        } else {
+            console.log("Debug input processed successfully.");
+        }
+    }
+
+    // Dummy utility function for future use
+    function dummyHelperFunction() {
+        console.log("This is a dummy helper.");
+    }
 
     </script>
 </head>
